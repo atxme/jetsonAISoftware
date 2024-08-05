@@ -12,3 +12,7 @@ class RtcSession :
         self.blackhole = MediaBlackhole()
         self.pc.addTrack(self.player.audio)
         self.pc.addTrack(self.player.video)
+
+
+    def loginToHost(self):
+        
