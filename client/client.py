@@ -1,11 +1,14 @@
 import socket
 from threading import Thread
+from nvidia_racecar import NvidiaRacecar
+
 
 class SocketClient:
     def __init__(self, server_ip: str, server_port: int = 8888):
         self.server_ip = server_ip
         self.server_port = server_port
         self.buffersize = 1024
+        self.car = NvidiaRacecar()
 
         # Initialiser le socket pour la réception
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,7 +18,7 @@ class SocketClient:
         self.receive_thread = Thread(target=self.receiveControlData, daemon=True)
         self.receive_thread.start()
 
-    def initConnection(self):
+    def initConnection(self) -> None:
         # Se connecter au serveur
         try:
             self.socket.connect((self.server_ip, self.server_port))
@@ -35,7 +38,6 @@ class SocketClient:
                 print(f"Error receiving data: {e}")
                 break
 
-    def process_command(self, command):
-        # Traitez la commande ici
-        print(f"Processing command: {command}")
-        # Ajoutez ici le code pour exécuter les commandes reçues
+    def process_command(self, command : str) -> None:
+        command_values = command.split(";")
+        self.car = NvidiaRacecar(throttle=float(command_values[0]), steering=float(command_values[1]))
