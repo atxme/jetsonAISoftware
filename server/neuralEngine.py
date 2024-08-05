@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import os
 import tensorrt as trt
 import pycuda.driver as cuda
 import pycuda.autoinit
@@ -15,7 +14,7 @@ class NeuralEngine:
         self.bindings = []
         self.stream = None
 
-    def loadEngine(self, engine_path):
+    def load_engine(self, engine_path):
         TRT_LOGGER = trt.Logger(trt.Logger.INFO)
         with open(engine_path, "rb") as f, trt.Runtime(TRT_LOGGER) as runtime:
             self.engine = runtime.deserialize_cuda_engine(f.read())
@@ -35,35 +34,49 @@ class NeuralEngine:
         self.stream = cuda.Stream()
 
     def infer(self, img):
-        # Preprocess the image using OpenCV and CUDA
-        cuda_image = cv2.cuda_GpuMat()
-        cuda_image.upload(img)
+        try:
+            # Check if image is loaded correctly
+            if img is None or not isinstance(img, np.ndarray):
+                raise ValueError("Invalid image input. Must be a valid numpy array.")
+            
+            # Preprocess the image using OpenCV and CUDA
+            cuda_image = cv2.cuda_GpuMat()
+            cuda_image.upload(img)
 
-        # Convert image to RGB
-        cuda_image = cv2.cuda.cvtColor(cuda_image, cv2.COLOR_BGR2RGB)
+            # Convert image to RGB
+            cuda_image = cv2.cuda.cvtColor(cuda_image, cv2.COLOR_BGR2RGB)
 
-        # Resize the image to the expected input size (e.g., 224x224)
-        cuda_image = cv2.cuda.resize(cuda_image, (224, 224))
+            # Resize the image to the expected input size (e.g., 224x224)
+            cuda_image = cv2.cuda.resize(cuda_image, (224, 224))
 
-        # Download the processed image from GPU to CPU
-        preprocessed_image = cuda_image.download()
+            # Download the processed image from GPU to CPU
+            preprocessed_image = cuda_image.download()
 
-        # Normalize and transpose the image as required by the model
-        preprocessed_image = preprocessed_image.astype(np.float32) / 255.0
-        preprocessed_image = np.transpose(preprocessed_image, (2, 0, 1))
-        preprocessed_image = np.expand_dims(preprocessed_image, axis=0)
+            # Normalize and transpose the image as required by the model
+            preprocessed_image = preprocessed_image.astype(np.float32) / 255.0
+            preprocessed_image = np.transpose(preprocessed_image, (2, 0, 1))
+            preprocessed_image = np.expand_dims(preprocessed_image, axis=0)
 
-        # Copy data to the device input buffer
-        np.copyto(self.inputs[0]['host'], preprocessed_image.ravel())
-        cuda.memcpy_htod_async(self.inputs[0]['device'], self.inputs[0]['host'], self.stream)
+            # Ensure input shape matches
+            if self.inputs:
+                input_shape = self.engine.get_binding_shape(0)
+                if preprocessed_image.shape != input_shape:
+                    raise ValueError(f"Preprocessed image shape {preprocessed_image.shape} does not match model input shape {input_shape}.")
 
-        # Execute inference
-        self.context.execute_async_v2(bindings=self.bindings, stream_handle=self.stream.handle)
+            # Copy data to the device input buffer
+            np.copyto(self.inputs[0]['host'], preprocessed_image.ravel())
+            cuda.memcpy_htod_async(self.inputs[0]['device'], self.inputs[0]['host'], self.stream)
 
-        # Copy data from the device output buffer to the host
-        cuda.memcpy_dtoh_async(self.outputs[0]['host'], self.outputs[0]['device'], self.stream)
+            # Execute inference
+            self.context.execute_async_v2(bindings=self.bindings, stream_handle=self.stream.handle)
 
-        # Synchronize the stream to ensure all operations are complete
-        self.stream.synchronize()
+            # Copy data from the device output buffer to the host
+            cuda.memcpy_dtoh_async(self.outputs[0]['host'], self.outputs[0]['device'], self.stream)
 
-        return self.outputs[0]['host']
+            # Synchronize the stream to ensure all operations are complete
+            self.stream.synchronize()
+
+            return self.outputs[0]['host']
+        except Exception as e:
+            print(f"An error occurred during inference: {e}")
+            return None

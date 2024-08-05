@@ -1,54 +1,54 @@
-import pygame
-from pygame.locals import *
-import time
+from webRtcManagement import RtcSession
+from neuralEngine import NeuralEngine
+from controller import CxController
+from network import SocketServer
+from imageProcessing import ImageProcessing
+import argparse
+import os
+import sys
+import threading
 
-# Initialiser pygame pour la gestion des entrées
-pygame.init()
-pygame.joystick.init()
 
-def list_controllers():
-    # Nombre de contrôleurs connectés
-    joystick_count = pygame.joystick.get_count()
-    print(f"Nombre de contrôleurs détectés : {joystick_count}")
-
-    # Itérer sur chaque contrôleur connecté
-    for i in range(joystick_count):
-        joystick = pygame.joystick.Joystick(i)
-        joystick.init()  # Initialiser chaque joystick pour pouvoir l'interroger
-
-        # Afficher des informations détaillées sur chaque contrôleur
-        print(f"Contrôleur {i}:")
-        print(f"  Nom: {joystick.get_name()}")
-        print(f"  Nombre d'axes: {joystick.get_numaxes()}")
-        print(f"  Nombre de boutons: {joystick.get_numbuttons()}")
-        print(f"  Nombre de chapeaux: {joystick.get_numhats()}")
 
 def main():
-    print("Démarrage du test des contrôleurs...")
-    list_controllers()
+    # Load socket server
+    # Get local IP first
+    os.system("hostname -I > ip.txt")
+    with open("ip.txt", "r") as file:
+        ip = file.read().strip()
+    os.remove("ip.txt")
 
-    try:
-        # Boucle pour garder le script en écoute des entrées
-        while True:
-            time.sleep(0.1)  # Attendre un peu pour ne pas surcharger le processeur
-            pygame.event.pump()  # Mise à jour des événements pygame
+    # Create and start socket server
+    socket = SocketServer(ip, 8888)  # Open a socket on local IP and port 8888
 
-            # Itérer sur chaque contrôleur connecté
-            for i in range(pygame.joystick.get_count()):
-                joystick = pygame.joystick.Joystick(i)
-                joystick.init()
+    # Initialize neural engine
+    engine = NeuralEngine()
+    engine.load_engine("model.engine")
 
-                # Lire les axes
-                axes = [joystick.get_axis(j) for j in range(joystick.get_numaxes())]
-                print(f"Contrôleur {i} axes: {axes}")
+    # Create and start controller thread
+    controller = CxController(socket)
+    controller.listControllerAvailable()  # Perform self-test
+    controller_thread = threading.Thread(target=controller.run)
 
+    # Create WebRTC session and start it
+    webrtc = RtcSession(ip, engine)
 
+    # Create and start image processing thread
+    image_processor = ImageProcessing(engine, webrtc.image_queue)
+    image_processor_thread = threading.Thread(target=image_processor.run)
 
-    except KeyboardInterrupt:
-        print("Fermeture du script.")
-    finally:
-        # Nettoyer en quittant
-        pygame.quit()
+    webrtc_thread = threading.Thread(target=webrtc.start)
+
+    # Start threads
+    controller_thread.start()
+    webrtc_thread.start()
+    image_processor_thread.start()
+
+    # Wait for threads to finish
+    controller_thread.join()
+    webrtc_thread.join()
+    image_processor_thread.join()
+
 
 if __name__ == "__main__":
     main()
