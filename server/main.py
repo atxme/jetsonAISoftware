@@ -42,13 +42,7 @@ def main():
                 axes = [joystick.get_axis(j) for j in range(joystick.get_numaxes())]
                 print(f"Contrôleur {i} axes: {axes}")
 
-                # Lire les boutons
-                buttons = [joystick.get_button(j) for j in range(joystick.get_numbuttons())]
-                print(f"Contrôleur {i} boutons: {buttons}")
 
-                # Lire les chapeaux
-                hats = [joystick.get_hat(j) for j in range(joystick.get_numhats())]
-                print(f"Contrôleur {i} chapeaux: {hats}")
 
     except KeyboardInterrupt:
         print("Fermeture du script.")

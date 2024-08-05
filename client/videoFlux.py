@@ -7,7 +7,6 @@ from threading import Thread
 
 class VideoFlux:
 
-
     def initCamera(self):
         for i in range(10):
             self.ret, self.frame = self.cap.read()
@@ -22,7 +21,7 @@ class VideoFlux:
             sys.exit(0)
 
     def getFrame(self):
-
+        
 
 
 
