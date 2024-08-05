@@ -5,18 +5,20 @@ import numpy as np
 import pygame
 from pygame.locals import *
 import time
+from network import SocketServer
 
 class CxController :
     
-    def __init__(self) -> None:
+    def __init__(self, socket : SocketServer) -> None:
         pygame.init()
         pygame.joystick.init()
         self.joystick = pygame.joystick.Joystick(0)
         self.joystick.init()
         self.axis = [0, 0]
         self.dead_zone = 0.1
+        self.socket = socket
 
-    def listControllerAvailable() -> None:
+    def listControllerAvailable(self) -> None:
         joystick_count = pygame.joystick.get_count()
         print(f"Nombre de contrôleurs détectés : {joystick_count}")
 

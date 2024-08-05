@@ -22,10 +22,4 @@ class SocketServer:
         except socket.error as e:
             print(f"Failed to send data: {e}")
 
-    def start(self):
-        self.listen()
-        while True:
-            command = input("Enter command to send: ")
-            thread = threading.Thread(target=self.sendControlData, args=(command,))
-            thread.start()
 
