@@ -40,4 +40,5 @@ class SocketClient:
 
     def process_command(self, command : str) -> None:
         command_values = command.split(";")
-        self.car = NvidiaRacecar(throttle=float(command_values[0]), steering=float(command_values[1]))
+        self.car.throttle = float(command_values[0])
+        self.car.steering = float(command_values[1])
