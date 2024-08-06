@@ -5,7 +5,6 @@ import sys
 from threading import Thread
 from queue import Queue
 
-
 class VideoFlux:
 
     def __init__(self) -> None:
@@ -25,9 +24,9 @@ class VideoFlux:
                 self.capIdx = i
                 break
             else:
-                i+=1
+                i += 1
         
-        if (self.cap.isOpened() != True):
+        if not self.isOpened:
             print("Error: Camera not found")
             sys.exit(0)
         
@@ -35,11 +34,11 @@ class VideoFlux:
         self.cap.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
         self.cap.set(cv.CAP_PROP_FPS, 30)
 
-        
     def captureFrame(self):
         while True:
             self.ret, self.frame = self.cap.read()
-            self.queue.put(self.frame)
+            if self.ret:
+                self.queue.put(self.frame)
             if cv.waitKey(1) & 0xFF == ord('q'):
                 break
         self.releaseCamera()
@@ -48,16 +47,6 @@ class VideoFlux:
         self.cap.release()
         cv.destroyAllWindows()
 
-    
     def run(self):
         self.initCamera()
         Thread(target=self.captureFrame).start()
-
-
-
-
-        
-
-
-
-    

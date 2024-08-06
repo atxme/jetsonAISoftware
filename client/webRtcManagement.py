@@ -30,15 +30,18 @@ class WebRTCClient:
             offer = await self.pc.createOffer()
             await self.pc.setLocalDescription(offer)
 
-            async with session.post(f"{self.server_url}/offer", json={
-                "sdp": self.pc.localDescription.sdp,
-                "type": self.pc.localDescription.type,
-            }) as response:
-                answer = await response.json()
-
-            await self.pc.setRemoteDescription(RTCSessionDescription(
-                sdp=answer["sdp"], type=answer["type"]
-            ))
+            try:
+                async with session.post(f"{self.server_url}/offer", json={
+                    "sdp": self.pc.localDescription.sdp,
+                    "type": self.pc.localDescription.type,
+                }) as response:
+                    answer = await response.json()
+                    await self.pc.setRemoteDescription(RTCSessionDescription(
+                        sdp=answer["sdp"], type=answer["type"]
+                    ))
+            except Exception as e:
+                print(f"Error during WebRTC negotiation: {e}")
+                return
 
             # Keep the connection open
             while True:

@@ -29,14 +29,11 @@ def main():
     # Create the video flux object
     videoFlux = VideoFlux()
 
-    #server_url = "http://localhost:8888"
-
     # Create the WebRTC client
     webrtc = WebRTCClient("http://localhost:8888", videoFlux)
     webrtc.start()
 
     videoFlux.run()
-
 
 if __name__ == "__main__":
     main()
