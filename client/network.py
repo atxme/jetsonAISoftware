@@ -3,6 +3,7 @@ import threading
 from nvidia_racecar import NvidiaRacecar
 
 class SocketClient:
+    
     def __init__(self, nvidiaRaceCar: NvidiaRacecar, serverIp: str, serverPort: int = 8888) -> None:
         self.serverIp = serverIp
         self.serverPort = serverPort
