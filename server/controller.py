@@ -66,7 +66,7 @@ class CxController :
 
         return self.axis
     
-    def runSelfTest() -> None:
+    def runSelfTest(self) -> None:
 
         pygame.init()
         pygame.joystick.init()
@@ -98,7 +98,7 @@ class CxController :
             pygame.quit()
 
         
-    def run() -> None:
+    def run(self) -> None:
 
         try:
             while True:
@@ -108,6 +108,7 @@ class CxController :
                     joystick = pygame.joystick.Joystick(i)
                     joystick.init()
                     axes = [joystick.get_axis(j) for j in range(joystick.get_numaxes())]
+                    self.socket.sendControlData(f"{axes[1]};{axes[2]}")
                     
         except KeyboardInterrupt:
             print("Fermeture du script.")
@@ -115,4 +116,13 @@ class CxController :
             pygame.quit()
 
 
+def test():
+    os.system("hostname -I > ip.txt")
+    with open("ip.txt", "r") as file:
+        ip = file.read().strip()
+    os.remove("ip.txt")
+
+    # Create and start socket server
+    socket = SocketServer(ip, 8888)  # Open a socket on local IP and port 8888
+    CxController(socket).runSelfTest()
 
