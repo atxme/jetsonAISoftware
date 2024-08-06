@@ -33,29 +33,28 @@ class NeuralEngine:
         
         self.stream = cuda.Stream()
 
+    def preprocess_image(self, img):
+        # Convert image to RGB
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        # Resize the image to the expected input size (e.g., 224x224)
+        img_resized = cv2.resize(img_rgb, (224, 224))
+
+        # Normalize and transpose the image as required by the model
+        img_normalized = img_resized.astype(np.float32) / 255.0
+        img_transposed = np.transpose(img_normalized, (2, 0, 1))
+        img_expanded = np.expand_dims(img_transposed, axis=0)
+
+        return img_expanded
+
     def infer(self, img):
         try:
             # Check if image is loaded correctly
             if img is None or not isinstance(img, np.ndarray):
                 raise ValueError("Invalid image input. Must be a valid numpy array.")
             
-            # Preprocess the image using OpenCV and CUDA
-            cuda_image = cv2.cuda_GpuMat()
-            cuda_image.upload(img)
-
-            # Convert image to RGB
-            cuda_image = cv2.cuda.cvtColor(cuda_image, cv2.COLOR_BGR2RGB)
-
-            # Resize the image to the expected input size (e.g., 224x224)
-            cuda_image = cv2.cuda.resize(cuda_image, (224, 224))
-
-            # Download the processed image from GPU to CPU
-            preprocessed_image = cuda_image.download()
-
-            # Normalize and transpose the image as required by the model
-            preprocessed_image = preprocessed_image.astype(np.float32) / 255.0
-            preprocessed_image = np.transpose(preprocessed_image, (2, 0, 1))
-            preprocessed_image = np.expand_dims(preprocessed_image, axis=0)
+            # Preprocess the image on CPU
+            preprocessed_image = self.preprocess_image(img)
 
             # Ensure input shape matches
             if self.inputs:

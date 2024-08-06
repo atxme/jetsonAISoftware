@@ -8,9 +8,22 @@ import os
 import sys
 import threading
 
-
+def initMessage():
+    print("Nvidia Jetson AI SOFTWARE")
+    print("Version 1.0")
+    print("Author: Christophe. B (2024)")
+    print("Date: 2024-07-01")
+    print("Public key of the binary:")
+    with open("kPub.pem", "r") as file:
+        lines = file.readlines()
+        key_lines = [line.strip() for line in lines if "BEGIN PUBLIC KEY" not in line and "END PUBLIC KEY" not in line]
+        public_key = ''.join(key_lines)
+    print(public_key)
+    print("\n")
 
 def main():
+    initMessage()
+    
     # Load socket server
     # Get local IP first
     os.system("hostname -I > ip.txt")
