@@ -23,7 +23,7 @@ def main():
     raceCar = NvidiaRacecar()
     
     # Create the socket client
-    socket = SocketClient(raceCar, "10.82.225.26", 8888)
+    socket = SocketClient(raceCar, "10.82.249.10", 8888)
     socket.run()
 
     # Create the video flux object

@@ -16,9 +16,13 @@ class NeuralEngine:
 
     def load_engine(self, engine_path):
         TRT_LOGGER = trt.Logger(trt.Logger.INFO)
-        with open(engine_path, "rb") as f, trt.Runtime(TRT_LOGGER) as runtime:
-            self.engine = runtime.deserialize_cuda_engine(f.read())
-        self.context = self.engine.create_execution_context()
+        try :
+            with open(engine_path, "rb") as f, trt.Runtime(TRT_LOGGER) as runtime:
+                self.engine = runtime.deserialize_cuda_engine(f.read())
+                self.context = self.engine.create_execution_context()
+        except Exception as e:
+            print(f"An error occurred while loading the engine: {e}")
+            return 
 
         for binding in self.engine:
             size = trt.volume(self.engine.get_binding_shape(binding)) * self.engine.max_batch_size

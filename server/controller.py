@@ -12,6 +12,7 @@ class CxController :
     def __init__(self, socket : SocketServer) -> None:
         pygame.init()
         pygame.joystick.init()
+        self.listControllerAvailable()
         self.joystick = pygame.joystick.Joystick(0)
         self.joystick.init()
         self.axis = [0, 0]
@@ -63,7 +64,6 @@ class CxController :
 
         # Map horizontal axis value: gauche (-1), droite (+1)
         self.axis[1] = horizontal_axis_value
-
         return self.axis
     
     def runSelfTest(self) -> None:
@@ -103,12 +103,8 @@ class CxController :
         try:
             while True:
                 time.sleep(0.5)
-                pygame.event.pump()
-                for i in range(pygame.joystick.get_count()):
-                    joystick = pygame.joystick.Joystick(i)
-                    joystick.init()
-                    axes = [joystick.get_axis(j) for j in range(joystick.get_numaxes())]
-                    self.socket.sendControlData(f"{axes[1]};{axes[2]}")
+                axes = self.getControllerAxis()
+                self.socket.sendControlData(f"{axes[0]};{axes[1]}")
                     
         except KeyboardInterrupt:
             print("Fermeture du script.")

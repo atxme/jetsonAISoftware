@@ -40,7 +40,6 @@ def main():
 
     # Create and start controller thread
     controller = CxController(socket)
-    controller.listControllerAvailable()  # Perform self-test
     controller_thread = threading.Thread(target=controller.run)
 
     # Create WebRTC session and start it
