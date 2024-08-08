@@ -1,4 +1,3 @@
-from webRtcManagement import VideoFrameTrack, WebRTCClient
 from videoFlux import VideoFlux
 from network import SocketClient
 from nvidia_racecar import NvidiaRacecar
@@ -27,12 +26,7 @@ def main():
     socket.run()
 
     # Create the video flux object
-    videoFlux = VideoFlux()
-
-    # Create the WebRTC client
-    webrtc = WebRTCClient("http://localhost:8888", videoFlux)
-    webrtc.start()
-
+    videoFlux = VideoFlux("10.82.225.26", 8888)
     videoFlux.run()
 
 if __name__ == "__main__":
