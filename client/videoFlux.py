@@ -78,6 +78,7 @@ class VideoFlux:
                     self.pipelineProcess.stdin.write(frame.tobytes())
                     self.pipelineProcess.stdin.flush()
                     self.queue.task_done()
+                    cv.imshow("Video", frame)
                 cv.waitKey(1)
         finally:
             self.stop_event.set()
