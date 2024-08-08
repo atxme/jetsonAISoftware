@@ -1,9 +1,14 @@
 import cv2 as cv
+import gi
 import numpy as np
-import sys
 from threading import Thread, Event
 from queue import Queue
-import subprocess
+import sys
+
+gi.require_version('Gst', '1.0')
+from gi.repository import Gst, GLib
+
+Gst.init(None)
 
 class VideoFlux:
     def __init__(self, serverIp: str, serverPort: int = 8888) -> None:
@@ -11,14 +16,14 @@ class VideoFlux:
         self.frame = None
         self.ret = None
         self.isOpened = False
-        self.queue = Queue()
-        self.pipelineProcess = None
-        self.stop_event = Event()
         self.serverIp = serverIp
         self.serverPort = serverPort
+        self.pipeline = None
+        self.appsrc = None
+        self.stop_event = Event()
+        self.queue = Queue()
 
     def initCamera(self):
-        # Attempt to open camera
         for i in range(10):
             self.cap = cv.VideoCapture(i)
             if self.cap.isOpened():
@@ -26,30 +31,22 @@ class VideoFlux:
                 self.capIdx = i
                 self.isOpened = True
                 break
-            self.cap.release()  # Release the camera if not opened
-
+            self.cap.release()
         if not self.isOpened:
             print("Error: Camera not found")
             sys.exit(1)
-        
         print("Camera opened successfully")
-        # Set camera properties
         self.cap.set(cv.CAP_PROP_FRAME_WIDTH, 640)
         self.cap.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
         self.cap.set(cv.CAP_PROP_FPS, 30)
 
     def initPipelineFlux(self):
-        # Construct the GStreamer command with dynamic IP and port
-        command = [
-            'gst-launch-1.0',
-            'appsrc', 'caps=video/x-raw,format=BGR,width=640,height=480,framerate=30/1',
-            '!', 'videoconvert',
-            '!', 'x264enc',
-            '!', 'rtph264pay',
-            '!', f'udpsink host={self.serverIp} port={self.serverPort}'
-        ]
-        
-        self.pipelineProcess = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.pipeline = Gst.parse_launch(
+            f"appsrc name=source is-live=true format=GST_FORMAT_TIME caps=video/x-raw,format=BGR,width=640,height=480,framerate=30/1 ! videoconvert ! x264enc ! rtph264pay ! udpsink host={self.serverIp} port={self.serverPort}"
+        )
+        self.appsrc = self.pipeline.get_by_name('source')
+        self.pipeline.set_state(Gst.State.PLAYING)
+        print("Pipeline initialized and playing")
 
     def captureFrame(self):
         while not self.stop_event.is_set():
@@ -66,26 +63,37 @@ class VideoFlux:
             self.cap.release()
         cv.destroyAllWindows()
 
+    def pushFrameToPipeline(self, frame):
+        if self.appsrc:
+            # Convert the frame to the correct format
+            buf = Gst.Buffer.new_allocate(None, frame.nbytes, None)
+            buf.fill(0, frame.tobytes())
+            buf.pts = Gst.CLOCK_TIME_NONE
+            buf.dts = Gst.CLOCK_TIME_NONE
+            buf.duration = Gst.CLOCK_TIME_NONE
+            buf.offset = 0
+            # Push the buffer into appsrc
+            self.appsrc.emit('push-buffer', buf)
+
     def run(self):
         self.initCamera()
         self.initPipelineFlux()
         capture_thread = Thread(target=self.captureFrame)
         capture_thread.start()
-        
+
         try:
             while not self.stop_event.is_set():
                 if not self.queue.empty():
                     frame = self.queue.get()
-                    self.pipelineProcess.stdin.write(frame.tobytes())
-                    self.pipelineProcess.stdin.flush()
+                    # Ensure all interactions with GStreamer occur on the main thread
+                    GLib.idle_add(self.pushFrameToPipeline, frame)
                     self.queue.task_done()
-                    cv.imshow("Video", frame)
-                cv.waitKey(1)
         finally:
             self.stop_event.set()
             capture_thread.join()
-            self.pipelineProcess.stdin.close()
-            self.pipelineProcess.wait()
+            self.pipeline.set_state(Gst.State.NULL)
             self.releaseCamera()
 
-
+if __name__ == "__main__":
+    video = VideoFlux(serverIp='10.82.249.10', serverPort=50000)  # Remplacez '192.168.1.100' par l'IP du serveur de réception
+    video.run()
