@@ -32,6 +32,7 @@ class VideoFlux:
             print("Error: Camera not found")
             sys.exit(1)
         
+        print("Camera opened successfully")
         # Set camera properties
         self.cap.set(cv.CAP_PROP_FRAME_WIDTH, 640)
         self.cap.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
