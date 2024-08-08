@@ -22,11 +22,11 @@ def main():
     raceCar = NvidiaRacecar()
     
     # Create the socket client
-    socket = SocketClient(raceCar, "10.82.249.10", 8888)
+    socket = SocketClient(raceCar, "10.82.249.10", 50001)
     socket.run()
 
     # Create the video flux object
-    videoFlux = VideoFlux("10.82.249.10", 8888)
+    videoFlux = VideoFlux("10.82.249.10", 50000)
     videoFlux.run()
 
 if __name__ == "__main__":
