@@ -8,8 +8,6 @@
 #include <string.h>
 
 
-
-
 //////////////////////////
 /// createSocket
 //////////////////////////
@@ -60,6 +58,21 @@ int createSocket(struct tSocketConfig* p_ptSocketConfig)
     return l_iSocket;
 }
 
+//////////////////////////
+/// deleteSocket
+//////////////////////////
+int deleteSocket(int p_iSocket)
+{
+    X_ASSERT(p_iSocket >= 0);
+    int l_iResult = close(p_iSocket);
+    if (l_iResult < 0)
+    {
+        printf("%s\n", "Error closing socket");
+        return -1;
+    }
+
+    return 0;
+}
 
 //////////////////////////
 /// connectSocket

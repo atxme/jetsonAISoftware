@@ -63,6 +63,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/network)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/pipeline)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xAssert)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/i2c)
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${GSTREAMER_INCLUDE_DIRS})
 
@@ -76,6 +77,9 @@ set(SOURCE_FILES
         xAssert/xAssert.c
         network/xNetwork.cpp
         network/xNetwork.h
+        ../pypelinetest.cpp
+        i2c/i2c_core.c
+        i2c/i2c_core.h
 )
 
 # Add executable

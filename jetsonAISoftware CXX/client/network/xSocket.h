@@ -5,6 +5,10 @@
 #ifndef XSOCKET_H
 #define XSOCKET_H
 
+#ifdef cplusplus
+extern "C" {
+#endif //cplusplus
+
 #ifndef _WIN32
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -25,8 +29,6 @@
 
 #define MAX_BUFFER_SIZE 1024
 #define MAX_SOCKET_AVAILABLE 10
-
-
 
 typedef struct tSocketConfig {
     unsigned short usSocketType;    // Socket type (e.g., SOCK_STREAM for TCP)
@@ -72,6 +74,17 @@ int Crc16Processing(unsigned char* p_pucData, unsigned long p_ulDataSize, unsign
  */
 int createSocket(struct tSocketConfig* p_ptSocketConfig);
 
+
+/*
+ * @brief Socket deletion function
+ * @note This function is used to delete a socket
+ *
+ * @param p_iSocket : socket file descriptor
+ *
+ * @return 0 if the socket is deleted successfully, -1 otherwise
+ */
+int deleteSocket(int p_iSocket);
+
 /*
  * @brief Socket connection function
  * @note This function is used to connect a socket
@@ -109,7 +122,8 @@ int receiveData(struct tData* p_ptData, int p_iSocket);
 
 
 
-
-
+#ifdef cplusplus
+}
+#endif //cplusplus
 
 #endif //XSOCKET_H

@@ -43,6 +43,6 @@ This warning is for project developers.  Use -Wno-dev to suppress it.
 -- Checking for module 'gstreamer-base-1.0'
 --   Found gstreamer-base-1.0, version 1.24.5
 -- GStreamer found
--- Configuring done (0.4s)
+-- Configuring done (0.5s)
 -- Generating done (0.0s)
 -- Build files have been written to: /home/christophe/Bureau/ai racer kit software /jetsonAISoftware CXX/client/cmake-build-debug
