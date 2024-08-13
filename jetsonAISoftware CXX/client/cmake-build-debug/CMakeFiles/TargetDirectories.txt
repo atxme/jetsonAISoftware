@@ -1,0 +1,7 @@
+/home/christophe/Bureau/ai racer kit software /jetsonAISoftware CXX/client/cmake-build-debug/CMakeFiles/jetsonSoftware-client.dir
+/home/christophe/Bureau/ai racer kit software /jetsonAISoftware CXX/client/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/christophe/Bureau/ai racer kit software /jetsonAISoftware CXX/client/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/christophe/Bureau/ai racer kit software /jetsonAISoftware CXX/client/cmake-build-debug/CMakeFiles/list_install_components.dir
+/home/christophe/Bureau/ai racer kit software /jetsonAISoftware CXX/client/cmake-build-debug/CMakeFiles/install.dir
+/home/christophe/Bureau/ai racer kit software /jetsonAISoftware CXX/client/cmake-build-debug/CMakeFiles/install/local.dir
+/home/christophe/Bureau/ai racer kit software /jetsonAISoftware CXX/client/cmake-build-debug/CMakeFiles/install/strip.dir
