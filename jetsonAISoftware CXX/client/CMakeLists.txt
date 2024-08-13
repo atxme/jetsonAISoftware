@@ -80,6 +80,8 @@ set(SOURCE_FILES
         ../pypelinetest.cpp
         i2c/i2c_core.c
         i2c/i2c_core.h
+        engine/xEngine.cpp
+        engine/xEngine.h
 )
 
 # Add executable
