@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "xsignature.h": "c"
+        "xsignature.h": "c",
+        "xassert.h": "c"
     }
 }

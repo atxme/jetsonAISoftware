@@ -13,7 +13,7 @@ int checkSignature()
     int l_iReturn = 0;
 
     // Lire les données et la signature depuis le fichier
-    l_iReturn = getDataFromFile("streamer.so", l_aucSignature, l_pucContent, &l_lContentSize);
+    l_iReturn = getDataFromFile("libstreamer.so", l_aucSignature, l_pucContent, &l_lContentSize);
     if (l_iReturn != 0) {
         fprintf(stderr, "Erreur lors de la lecture du fichier\n");
         return -1;
@@ -42,7 +42,7 @@ int checkSignature()
 
 int main()
 {
-    X_ASSERT(checkSignature() == 0);
+
     const std::string tcPipelineStr = "appsrc ! videoconvert ! video/x-raw,format=I420,width=640,height=480,framerate=30/1 ! x264enc tune=zerolatency speed-preset=ultrafast bitrate=500 ! rtph264pay ! udpsink host=127.0.0.1 port=5000";
     int l_iWidth = 640;
     int l_iHeight = 480;

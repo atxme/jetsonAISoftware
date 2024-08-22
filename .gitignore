@@ -396,3 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+private_key.pem
+signature.bin
+libstreamer.su
+streamer.so
