@@ -5,6 +5,7 @@ message(STATUS "CMake version: ${CMAKE_VERSION}")
 
 project(jetsonSoftware-client)
 
+
 # Set C and CXX compiler
 set(CMAKE_C_COMPILER /usr/bin/gcc)
 set(CMAKE_CXX_COMPILER /usr/bin/g++)
@@ -47,6 +48,17 @@ else()
     message (FATAL_ERROR "GStreamer not found")
 endif()
 
+#checking openssl installation
+message (STATUS "Checking for OpenSSL")
+find_package(OpenSSL REQUIRED)
+if (OPENSSL_FOUND)
+    message (STATUS "OpenSSL found")
+    include_directories(${OPENSSL_INCLUDE_DIR})
+else()
+    message (FATAL_ERROR "OpenSSL not found")
+endif()
+
+
 # Set compiler flags
 # Set compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -60,12 +72,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field -O3")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 # Set include directories
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/network)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/pipeline)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xAssert)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/i2c)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/XsSignature)
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${GSTREAMER_INCLUDE_DIRS})
+include_directories(${OPENSSL_INCLUDE_DIR})
+
+
 
 # Set source files
 set(SOURCE_FILES
@@ -73,6 +87,8 @@ set(SOURCE_FILES
         pipeline/xPipeline.h
         xAssert/xAssert.h
         xAssert/xAssert.c
+        XsSignature/xSignature.h
+        XsSignature/xSignature.c
 )
 
 #create so library
@@ -82,6 +98,7 @@ add_library(jetsonSoftware-client SHARED ${SOURCE_FILES})
 target_link_libraries(jetsonSoftware-client ${OpenCV_LIBS})
 target_link_libraries(jetsonSoftware-client ${GSTREAMER_LIBRARIES})
 target_link_libraries(jetsonSoftware-client ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(jetsonSoftware-client ${OPENSSL_LIBRARIES})
 
 # Install
 install(TARGETS jetsonSoftware-client DESTINATION bin)

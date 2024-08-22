@@ -12,7 +12,7 @@ def main():
     so_path = os.path.join(l_sPath, "streamer.so")
     print(f"Loading library from: {so_path}")
 
-    l_soLib = cdll.LoadLibrary(so_path)
+    l_soStreamerLib = cdll.LoadLibrary(so_path)
     
     l_oRaceCar = Racecar()
     l_oNvidiaRaceCar = NvidiaRacecar(l_oRaceCar)
@@ -21,7 +21,8 @@ def main():
     l_oSocket.run()
 
     # start the streamer process
-    l_oStreamer = Thread(target=l_soLib.main, args=())
+    l_soStreamer = Thread(target=l_soStreamerLib.main, args=(), daemon=False)
+    l_soStreamer.start()
 
 
 
