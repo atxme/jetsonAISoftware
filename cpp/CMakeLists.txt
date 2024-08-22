@@ -69,25 +69,14 @@ include_directories(${GSTREAMER_INCLUDE_DIRS})
 
 # Set source files
 set(SOURCE_FILES
-        network/xSocket.c
-        network/xSocket.h
         pipeline/xPipeline.cpp
         pipeline/xPipeline.h
         xAssert/xAssert.h
         xAssert/xAssert.c
-        network/xNetwork.cpp
-        network/xNetwork.h
-        ../pypelinetest.cpp
-        i2c/i2c_core.c
-        i2c/i2c_core.h
-        engine/xEngine.cpp
-        engine/xEngine.h
-        ../server/videoFlux/videoFlux.cpp
-        ../server/videoFlux/videoFlux.h
 )
 
-# Add executable
-add_executable(jetsonSoftware-client ${SOURCE_FILES})
+#create so library
+add_library(jetsonSoftware-client SHARED ${SOURCE_FILES})
 
 # Link libraries
 target_link_libraries(jetsonSoftware-client ${OpenCV_LIBS})
