@@ -1,1 +1,0 @@
-g++ -shared -fPIC -o libpipeline.so main.cpp pipeline/xPipeline.cpp xAssert/xAssert.c -I. -Ipipeline -IxAssert $(pkg-config --cflags --libs opencv4 gstreamer-1.0 gstreamer-video-1.0)
