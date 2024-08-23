@@ -401,3 +401,4 @@ private_key.pem
 signature.bin
 libstreamer.su
 streamer.so
+.vscode/

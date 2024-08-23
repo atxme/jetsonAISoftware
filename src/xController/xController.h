@@ -19,7 +19,7 @@ public:
      *@param p_ptNetworkInstance the network server instance
      *@return 0 if the controller is created successfully, -1 otherwise
      */
-     int buildInstance(CxNetwork* p_ptNetworkInstance);
+    static int buildInstance(CxNetwork* p_ptNetworkInstance);
 
 
     /**
@@ -36,6 +36,11 @@ public:
      * @brief copy assignment forbidden
      */
     CxController& operator=(const CxController&) = delete;
+
+    /**
+     * @brief get instance of the controller
+     */
+    static CxController* getInstance();
 
     /**
      *@brief list controller available
@@ -92,6 +97,11 @@ private:
      *@brief networkServer Instance
      */
     CxNetwork* m_pNetworkInstance;
+
+    /**
+     * @brief socket configuration
+     */
+    int m_iSocketConfig;
 };
 
 #endif //XCONTROLLER_H

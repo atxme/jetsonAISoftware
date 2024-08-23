@@ -24,12 +24,22 @@ extern "C" {
 #endif // _WIN32
 
 // Socket types
-#define TCP 0
-#define UDP 1
+#define TCP SOCK_STREAM
+#define UDP SOCK_DGRAM
 
 #define MAX_BUFFER_SIZE 1024
 #define MAX_SOCKET_AVAILABLE 10
 
+/**
+ * @brief Socket configuration structure
+ * @details This structure is used to configure a socket
+ * 
+ * @param usSocketType : Socket type (e.g., SOCK_STREAM for TCP)
+ * @param ulPort : Port number (better to use in_port_t for port)
+ * @param pcIpAddress : IP address as a string
+ * @param ptSockAddr : Pointer to a sockaddr_in structure
+ * @param ptSockAddrServer : Pointer to a sockaddr_server structure only define for connection
+ */
 typedef struct tSocketConfig {
     unsigned short usSocketType;    // Socket type (e.g., SOCK_STREAM for TCP)
     in_port_t ulPort;               // Port number (better to use in_port_t for port)

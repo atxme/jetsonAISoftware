@@ -39,9 +39,11 @@ int getDataFromFile(const char *p_ptucFile,
         return -1;
     }
 
+    p_ptucContent = (unsigned char *)realloc(p_ptucContent, *p_lContentSize);
+
     // Lire le contenu du fichier
     size_t l_uiRead = fread(l_ptucBuffer, 1, *p_lContentSize, l_pFile);
-    if (l_uiRead != *p_lContentSize)
+    if (l_uiRead != (unsigned long)*p_lContentSize)
     {
         fclose(l_pFile);
         free(l_ptucBuffer);

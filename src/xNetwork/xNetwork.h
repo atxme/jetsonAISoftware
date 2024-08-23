@@ -70,8 +70,9 @@ public :
 
     /**
      * @brief initialise all the socket and connect them
+     * @return 0 if the socket is connected successfully, -1 otherwise
     */
-    void initSocket();
+    int initSocket();
 
 
     /**

@@ -9,14 +9,21 @@
 #include <thread> // Inclure pour std::this_thread::sleep_for
 #include <SDL2/SDL.h> // Assurez-vous d'inclure SDL2
 
+CxController* CxController::m_pInstance = nullptr;
+
 ///////////////////////////////////
 /// Constructor
 ///////////////////////////////////
-CxController::CxController(CxNetworkServer* p_ptNetworkInstance)
+CxController::CxController(CxNetwork* p_ptNetworkInstance)
 {
-    m_pJoystick(nullptr);
-    m_fDeadZone(0.1);
+    m_pJoystick = nullptr;
+    m_fDeadZone = 0.1f;
     m_pNetworkInstance = p_ptNetworkInstance;
+
+    //get the fist socket which is used by the controller
+    std::vector<int> l_vSocket;
+    m_pNetworkInstance->getSocketTable(l_vSocket);
+    m_iSocketConfig = l_vSocket[0];
 }
 
 
@@ -34,7 +41,7 @@ CxController::~CxController()
 ///////////////////////////////////
 /// BuildInstance
 ///////////////////////////////////
-int CxController::buildInstance(CxNetworkServer* p_ptNetworkInstance)
+int CxController::buildInstance(CxNetwork* p_ptNetworkInstance)
 {
     if (m_pInstance != nullptr)
     {
@@ -42,6 +49,18 @@ int CxController::buildInstance(CxNetworkServer* p_ptNetworkInstance)
     }
     m_pInstance = new CxController(p_ptNetworkInstance);
     return 0;
+}
+
+///////////////////////////////////
+/// GetInstance
+///////////////////////////////////
+CxController* CxController::getInstance()
+{
+    if (m_pInstance == nullptr)
+    {
+        X_ASSERT(false);
+    }
+    return m_pInstance;
 }
 
 ///////////////////////////////////
@@ -143,6 +162,7 @@ void CxController::runController()
         //cast the axis float in axis[0] ";" axis[1]
         std::string l_sCommand = std::to_string(m_fAxis[0]) + ";" + std::to_string(m_fAxis[1]);
 
-        m_pNetworkInstance->getInstance().sendUpdate(m_fAxis);
+        //send the command to the network server 
+        m_pNetworkInstance->sendData(m_iSocketConfig, l_sCommand.c_str(), l_sCommand.size());
     }
 }

@@ -98,7 +98,7 @@ void CxNetwork::getSocketTable(std::vector<int>& p_pvSocket)
 ///////////////////////////////////
 /// run
 ///////////////////////////////////
-void CxNetwork::initSocket()
+int CxNetwork::initSocket()
 {
     int l_iReturn = 0;
     for (int l_iCounter = 0; l_iCounter < m_iSocketCount; l_iCounter++)
@@ -110,7 +110,11 @@ void CxNetwork::initSocket()
             std::cout << "Error connecting socket" << std::endl;
             std::cout << "Socket configuration : " << m_vSocketConfig[l_iCounter].usSocketType << std::endl;
         }
+
+        return l_iReturn;
     }
+
+    return 0;
 }
 
 ///////////////////////////////////
