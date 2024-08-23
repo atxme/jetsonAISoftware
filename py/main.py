@@ -14,6 +14,8 @@ def main():
 
     l_soStreamerLib = cdll.LoadLibrary(so_path)
     
+    l_oNvidiaRaceCar = NvidiaRacecar()
+
     #l_oSocket = SocketClient(l_oNvidiaRaceCar, "10.82.251.197", 8888)
     #l_oSocket.run()
 

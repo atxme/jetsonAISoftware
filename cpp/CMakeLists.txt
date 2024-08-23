@@ -63,6 +63,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable -Wno-unused-value -Wno-unused-local-typedefs")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 # Output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -93,6 +94,9 @@ target_link_libraries(streamer ${OPENSSL_LIBRARIES})
 target_link_directories(streamer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/XsSignature)
 target_link_directories(streamer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/xAssert)
 target_link_directories(streamer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/pipeline)
+
+#set build type
+set(CMAKE_BUILD_TYPE Release)
 
 # Install
 install(TARGETS streamer DESTINATION bin)
