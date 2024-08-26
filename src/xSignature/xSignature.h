@@ -1,8 +1,9 @@
 #ifndef XSIGNATURE_H
 #define XSIGNATURE_H
 
-#define X_SIGNATURE_SIZE 132
+
 #define X_CURVE_NAME "prime521r1"
+
 
 #include <openssl/evp.h>
 #include <openssl/pem.h>
@@ -20,12 +21,14 @@ extern "C" {
 * @param p_ptucSignature: pointer to store the signature 
 * @param p_ptucContent: pointer to store the content
 * @param p_lContentSize: pointer to store the size of the content
+* @param p_lSignatureSize: pointer to store the size of the signature
 * @return 0 if success, -1 if error
 */
 int getDataFromFile(const char *p_ptucFile, 
                     unsigned char *p_ptucSignature, 
                     unsigned char *p_ptucContent, 
-                    long *p_lContentSize);
+                    long *p_lContentSize,
+                    long *p_lSignatureSize);
 
 /**
  * @brief get the public key from openssl PEM file
@@ -39,12 +42,15 @@ int getPublicKeyFromFile(const char *p_ptucFile, EVP_PKEY **p_ptucPublicKey);
  * @brief check the signature 
  * @param p_ptucSignature: signature
  * @param p_ptucContent: content
+ * @param p_lContentSize: size of the content
+ * @param p_lSignatureSize: size of the signature
  * @param p_ptucPublicKey: public key
  * @return 0 if success, -1 if error
  */
 int xSignatureCheck(unsigned char *p_ptucSignature, 
                     unsigned char *p_ptucContent, 
                     long p_lContentSize,
+                    long p_lSignatureSize,
                     EVP_PKEY *p_ptucPublicKey);
 
 #ifdef __cplusplus

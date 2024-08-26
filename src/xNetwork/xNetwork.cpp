@@ -105,7 +105,7 @@ int CxNetwork::initSocket()
     {
         l_iReturn = connectSocket(m_vSocket[l_iCounter], &m_vSocketConfig[l_iCounter]);
 
-        if (l_iReturn < 0)
+        if (l_iReturn != 0)
         {
             std::cout << "Error connecting socket" << std::endl;
             std::cout << "Socket configuration : " << m_vSocketConfig[l_iCounter].usSocketType << std::endl;

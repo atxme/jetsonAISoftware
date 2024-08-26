@@ -66,6 +66,7 @@ int CxStreaming::initStreaming()
 {
     gst_init(nullptr, nullptr);
     //init capture video
+    std::cout << "Pipeline string : " << m_tcPipelineStr << std::endl;
     m_oVideoCapture = cv::VideoCapture(m_tcPipelineStr, cv::CAP_GSTREAMER);
     if (m_oVideoCapture.isOpened() == false)
     {
